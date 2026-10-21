@@ -1,0 +1,21 @@
+# 1. Enable required GCP services
+gcloud services enable artifactregistry.googleapis.com run.googleapis.com cloudbuild.googleapis.com
+
+# 2. Build and push image to Artifact Registry using Cloud Build
+gcloud builds submit --tag gcr.io/${GCP_PROJECT}/box-mcp-server:latest .
+
+# 3. Deploy image to Cloud Run
+gcloud run deploy box-mcp-server \
+    --image gcr.io/${GCP_PROJECT}/box-mcp-server:latest \
+    --region us-central1 \
+    --platform managed \
+    --allow-unauthenticated \
+    --port 8080 \
+    --min-instances 0 \
+    --max-instances 10 \
+    --timeout 300s \
+    --set-env-vars BOX_AUTH_TYPE=ccg,BOX_SUBJECT_TYPE=enterprise \
+    --set-secrets \
+BOX_CLIENT_ID=BOX_CLIENT_ID:latest,\
+BOX_CLIENT_SECRET=BOX_CLIENT_SECRET:latest,\
+BOX_SUBJECT_ID=BOX_SUBJECT_ID:latest
