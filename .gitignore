@@ -7,6 +7,17 @@ wheels/
 *.egg-info
 htmlcov/
 
+cd /opt/mcp-server-box
+
+cat << 'EOF' >> .gitignore
+.venv/
+__pycache__/
+*.pyc
+.env
+invoices.db
+.DS_Store
+EOF
+
 # Virtual environments
 .venv
 
