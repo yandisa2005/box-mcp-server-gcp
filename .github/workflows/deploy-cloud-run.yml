@@ -52,11 +52,11 @@ jobs:
           echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
           echo "GCP_PROJECT_ID=$GCP_PROJECT_ID" >> $GITHUB_ENV
 
-      # 6. Deploy Container to Cloud Run with Secret Manager Bindings
+      # 6. Deploy Container to Cloud Run
       - name: Deploy Container to Cloud Run
         run: |
           gcloud run deploy box-mcp-server \
-            --project "${{ env.GCP_PROJECT_ID }}" \
+            --project "inala-development-project" \
             --image "${{ env.IMAGE_TAG }}" \
             --region us-central1 \
             --platform managed \
@@ -66,7 +66,4 @@ jobs:
             --max-instances 10 \
             --timeout 300s \
             --set-env-vars BOX_AUTH_TYPE=ccg,BOX_SUBJECT_TYPE=enterprise \
-            --set-secrets \
-              BOX_CLIENT_ID=BOX_CLIENT_ID:latest,\
-              BOX_CLIENT_SECRET=BOX_CLIENT_SECRET:latest,\
-              BOX_SUBJECT_ID=BOX_SUBJECT_ID:latest
+            --set-secrets "BOX_CLIENT_ID=BOX_CLIENT_ID:latest,BOX_CLIENT_SECRET=BOX_CLIENT_SECRET:latest,BOX_SUBJECT_ID=BOX_SUBJECT_ID:latest"
