@@ -39,14 +39,15 @@ jobs:
       # 5. Build and Submit Container Image via Cloud Build
       - name: Build and Push Image
         env:
-          GCP_PROJECT_ID: 'inala-development-project' # Replace with your GCP Project ID string (not number)
+          GCP_PROJECT_ID: 'inala-development-project'
         run: |
           IMAGE_TAG="us-central1-docker.pkg.dev/${GCP_PROJECT_ID}/mcp-repo/box-mcp-server:${{ github.sha }}"
-      
-          # Explicitly pass --project to ensure Cloud Build targets the alphanumeric ID
-          gcloud builds submit --project "$GCP_PROJECT_ID" --tag "$IMAGE_TAG" .
-      
-          # Pass image tag to subsequent steps
+          
+          # Explicitly target current directory source
+          gcloud builds submit . \
+            --project "$GCP_PROJECT_ID" \
+            --tag "$IMAGE_TAG"
+          
           echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
           echo "GCP_PROJECT_ID=$GCP_PROJECT_ID" >> $GITHUB_ENV
 
