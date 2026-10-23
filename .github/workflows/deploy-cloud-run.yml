@@ -43,7 +43,7 @@ jobs:
         run: |
           IMAGE_TAG="us-central1-docker.pkg.dev/${GCP_PROJECT_ID}/mcp-repo/box-mcp-server:${{ github.sha }}"
           
-          # Submit asynchronously so Cloud Build compiles and pushes the image
+          # Submit build asynchronously so Cloud Build compiles and pushes to Artifact Registry
           gcloud builds submit . \
             --project "$GCP_PROJECT_ID" \
             --tag "$IMAGE_TAG" \
