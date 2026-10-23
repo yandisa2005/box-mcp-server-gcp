@@ -46,7 +46,7 @@ jobs:
           # Explicitly target current directory source
           gcloud builds submit . \
             --project "$GCP_PROJECT_ID" \
-            --tag "$IMAGE_TAG"
+            --tag "$IMAGE_TAG" \
             --suppress-logs
           
           echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
