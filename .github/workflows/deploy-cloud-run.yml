@@ -43,11 +43,11 @@ jobs:
         run: |
           IMAGE_TAG="us-central1-docker.pkg.dev/${GCP_PROJECT_ID}/mcp-repo/box-mcp-server:${{ github.sha }}"
           
-          # Explicitly target current directory source
+          # Submit asynchronously so gcloud exits immediately after queuing the build
           gcloud builds submit . \
             --project "$GCP_PROJECT_ID" \
             --tag "$IMAGE_TAG" \
-            --suppress-logs
+            --async
           
           echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
           echo "GCP_PROJECT_ID=$GCP_PROJECT_ID" >> $GITHUB_ENV
