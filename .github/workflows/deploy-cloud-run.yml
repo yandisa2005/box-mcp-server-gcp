@@ -36,7 +36,7 @@ jobs:
         run: |
           gcloud auth configure-docker us-central1-docker.pkg.dev --quiet
 
-      # 5. Build Container Image via Cloud Build and Wait for Completion
+      # 5. Build Container Image via Cloud Build and Poll Status
       - name: Build and Push Image
         env:
           GCP_PROJECT_ID: 'inala-development-project'
@@ -52,8 +52,23 @@ jobs:
           
           echo "Submitted build: $BUILD_ID"
           
-          # 2. Block until the build completes successfully (does not stream logs)
-          gcloud builds wait "$BUILD_ID" --project "$GCP_PROJECT_ID"
+          # 2. Poll until build finishes without attempting to stream stdout logs
+          while true; do
+            STATUS=$(gcloud builds describe "$BUILD_ID" \
+              --project "$GCP_PROJECT_ID" \
+              --format="value(status)")
+            echo "Current build status: $STATUS"
+          
+            if [ "$STATUS" = "SUCCESS" ]; then
+              echo "Cloud Build completed successfully!"
+              break
+            elif [ "$STATUS" = "FAILURE" ] || [ "$STATUS" = "INTERNAL_ERROR" ] || [ "$STATUS" = "TIMEOUT" ] || [ "$STATUS" = "CANCELLED" ]; then
+              echo "Cloud Build failed with status: $STATUS"
+              exit 1
+            fi
+          
+            sleep 10
+          done
           
           echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
           echo "GCP_PROJECT_ID=$GCP_PROJECT_ID" >> $GITHUB_ENV
