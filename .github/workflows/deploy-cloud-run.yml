@@ -36,18 +36,24 @@ jobs:
         run: |
           gcloud auth configure-docker us-central1-docker.pkg.dev --quiet
 
-      # 5. Build and Submit Container Image via Cloud Build
+      # 5. Build Container Image via Cloud Build and Wait for Completion
       - name: Build and Push Image
         env:
           GCP_PROJECT_ID: 'inala-development-project'
         run: |
           IMAGE_TAG="us-central1-docker.pkg.dev/${GCP_PROJECT_ID}/mcp-repo/box-mcp-server:${{ github.sha }}"
           
-          # Submit build asynchronously so Cloud Build compiles and pushes to Artifact Registry
-          gcloud builds submit . \
+          # 1. Trigger build asynchronously and capture the Build ID
+          BUILD_ID=$(gcloud builds submit . \
             --project "$GCP_PROJECT_ID" \
             --tag "$IMAGE_TAG" \
-            --async
+            --async \
+            --format="value(id)")
+          
+          echo "Submitted build: $BUILD_ID"
+          
+          # 2. Block until the build completes successfully (does not stream logs)
+          gcloud builds wait "$BUILD_ID" --project "$GCP_PROJECT_ID"
           
           echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
           echo "GCP_PROJECT_ID=$GCP_PROJECT_ID" >> $GITHUB_ENV
