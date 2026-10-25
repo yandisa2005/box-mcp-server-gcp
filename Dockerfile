@@ -1,23 +1,20 @@
 FROM python:3.13-slim
 
-# Copy uv binary directly from Astral's official image
+# Copy uv binary directly from Astral
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 
 WORKDIR /app
 
-# 1. Copy project files into the container
+# Copy project files
 COPY . .
 
-# --------------------------------------------------------------------
-# 2. PLACE IT HERE:
-# Install mcp pinned to <2 alongside our package into system site-packages
-# --------------------------------------------------------------------
+# Install dependencies with mcp<2 constraint
 RUN uv pip install --system --no-cache "mcp<2" .
 
-# 3. Configure Python path and port for Cloud Run
+# Set paths and ports
 ENV PYTHONPATH="/app:/app/src"
 ENV PORT=8080
 EXPOSE 8080
 
-# 4. Run the server CLI entrypoint
+# Explicitly pass --box-auth-type ccg to the CLI
 CMD ["mcp-server-box", "--transport", "sse", "--host", "0.0.0.0", "--port", "8080", "--box-auth-type", "ccg"]
