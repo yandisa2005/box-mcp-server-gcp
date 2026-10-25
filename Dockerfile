@@ -1,26 +1,20 @@
-FROM python:3.12-slim
+FROM python:3.13-slim
 
-# Prevent Python from writing pyc files & buffering stdout/stderr
-ENV PYTHONUNBUFFERED=1 \
-    PYTHONDONTWRITEBYTECODE=1 \
-    PORT=8080
+# Copy uv binary directly from Astral image
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 
 WORKDIR /app
 
-# Install uv for fast dependency resolution
-COPY --from=ghcr.io/astral-sh/uv:latest /uv /bin/uv
-
-# Copy project dependency specs
+# Copy dependency manifests
 COPY pyproject.toml uv.lock* README.md ./
 
-# Install project dependencies into the system/environment
-RUN uv pip install --system .
+# Install project dependencies
+RUN uv pip install --system --no-cache .
 
-# Copy application source code
-COPY src/ ./src/
+# Copy remaining application code
+COPY . .
 
-# Expose Cloud Run port
+ENV PORT=8080
 EXPOSE 8080
 
-# Launch Uvicorn SSE server listening on all interfaces (0.0.0.0)
-CMD ["python", "-m", "uvicorn", "src.mcp_server_box:app", "--host", "0.0.0.0", "--port", "8080"]
+CMD ["python", "-m", "box_mcp_server"]
