@@ -1,21 +1,20 @@
 FROM python:3.13-slim
 
-# Copy uv binary directly from Astral image
+# Install uv binary directly
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 
 WORKDIR /app
 
-# Copy dependency manifests
-COPY pyproject.toml uv.lock* README.md ./
-
-# Install project dependencies
-RUN uv pip install --system --no-cache .
-
-# Copy remaining application code
+# 1. Copy everything first so package definitions, source files, and README are present
 COPY . .
 
+# 2. Install the package and all dependencies into system site-packages
+RUN uv pip install --system --no-cache .
+
+# 3. Ensure Python searches both /app and /app/src for modules
+ENV PYTHONPATH="/app:/app/src"
 ENV PORT=8080
 EXPOSE 8080
 
-# Option A: Use the CLI binary directly (Recommended)
+# 4. Run the CLI entrypoint
 CMD ["mcp-server-box", "--transport", "sse", "--host", "0.0.0.0", "--port", "8080"]
