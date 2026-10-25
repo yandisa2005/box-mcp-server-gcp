@@ -8,6 +8,7 @@ scripts = { "mcp-server-box" = "mcp_server_box:main" }
 license = "MIT"
 authors = [{ name = "Box DevRel", email = "dx@box.com" }]
 dependencies = [
+    "mcp>=1.2.0,<2.0.0",
     "box-ai-agents-toolkit>=0.1.5",
     "colorlog>=6.10.1",
     "fastapi>=0.121.0",
