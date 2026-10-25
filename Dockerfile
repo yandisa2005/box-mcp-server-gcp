@@ -17,4 +17,4 @@ ENV PORT=8080
 EXPOSE 8080
 
 # Explicitly pass --box-auth-type ccg to the CLI
-CMD ["mcp-server-box", "--transport", "sse", "--host", "0.0.0.0", "--port", "8080", "--box-auth-type", "ccg"]
+CMD ["mcp-server-box", "--transport", "sse", "--host", "0.0.0.0", "--port", "8080", "--mcp-auth-type", "none", "--box-auth-type", "ccg"]
