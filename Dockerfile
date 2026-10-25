@@ -20,4 +20,4 @@ ENV PORT=8080
 EXPOSE 8080
 
 # 4. Run the server CLI entrypoint
-CMD ["mcp-server-box", "--transport", "sse", "--host", "0.0.0.0", "--port", "8080"]
+CMD ["mcp-server-box", "--transport", "sse", "--host", "0.0.0.0", "--port", "8080", "--box-auth-type", "ccg"]
