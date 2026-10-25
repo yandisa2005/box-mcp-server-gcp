@@ -17,4 +17,5 @@ COPY . .
 ENV PORT=8080
 EXPOSE 8080
 
-CMD ["python", "-m", "box_mcp_server"]
+# Option A: Use the CLI binary directly (Recommended)
+CMD ["mcp-server-box", "--transport", "sse", "--host", "0.0.0.0", "--port", "8080"]
