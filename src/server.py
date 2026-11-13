@@ -122,7 +122,7 @@ def create_server_info_tool(
 
     @mcp.tool()
     def mcp_server_info():
-        """Returns information about the MCP server."""
+        """Returns information regarding the MCP server."""
         info = {
             "server_name": mcp.name,
             "version": get_version(),
